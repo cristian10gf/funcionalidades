@@ -4,7 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -518,5 +524,58 @@ public class funcionalidad {
 
     public static int[] subVector(ArrayList<Integer> vector, int inicio, int fin) {
         return vector.subList(inicio, fin).stream().mapToInt(i -> i).toArray();
+    }
+    
+    public static String sendMessageAPI(String modelo, String promtText) throws ProtocolException, IOException {
+        if ("".equals(modelo)) modelo = "llama3.2";
+        
+        URL url = new URL("http://localhost:11434/api/generate");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; utf-8");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setDoOutput(true);
+        
+        String jsonInputString = "{ \"model\": " + modelo + ", \"prompt\": " + promtText + ", \"stream\": false}";
+
+        // Write the JSON body to the request
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+            os.write(input,0, input.length);
+        }
+
+        System.out.println("Response Code: " + conn.getResponseCode());
+        
+        StringBuilder response;
+        try ( BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+            response = new StringBuilder();
+            String line;
+            while ((line = in.readLine()) != null) response.append(line);
+        }
+
+        return obtenerCampo(response.toString(), "response");
+    }
+
+    public static String obtenerCampo(String json, String campo) {
+        String clave = "\"" + campo + "\":";
+        int inicio = json.indexOf(clave);
+        if (inicio == -1) return null; // El campo no se encuentra
+
+        inicio += clave.length(); // Mover el inicio al valor del campo
+        int fin = inicio;
+        boolean dentroDeComillas = false;
+
+        while (fin < json.length()) {
+            char actual = json.charAt(fin);
+            if (actual == '\"') dentroDeComillas = !dentroDeComillas; // Cambiar el estado si encontramos una comilla
+
+            // Si estamos fuera de comillas y encontramos una coma o un cierre de llave
+            if (!dentroDeComillas && (actual == ',' || actual == '}')) break; // Salimos del bucle
+            fin++;
+        }
+
+        String valor = json.substring(inicio, fin).trim();
+        if (valor.startsWith("\"") && valor.endsWith("\"")) valor = valor.substring(1, valor.length() - 1); // Eliminar las comillas si es un string
+        return valor;
     }
 }

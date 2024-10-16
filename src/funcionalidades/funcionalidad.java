@@ -264,7 +264,7 @@ public class funcionalidad {
         }
     }
 
-    public static void ordenar(int[] vector) {
+    public static void ordenarVector(int[] vector) {
         Arrays.sort(vector);
     }
 
@@ -577,5 +577,30 @@ public class funcionalidad {
         String valor = json.substring(inicio, fin).trim();
         if (valor.startsWith("\"") && valor.endsWith("\"")) valor = valor.substring(1, valor.length() - 1); // Eliminar las comillas si es un string
         return valor;
+    }
+    
+    public static void eliminarMultiplos(int[] criba, int numero) {
+        for (int i = 0; i < criba.length; i++) {
+            if (criba[i] != 0 && criba[i] % numero == 0) criba[i] = 0; 
+        }
+    }
+    
+    public static int[] getVectorPrimos(int N) {
+        int[] criba = new int[N - 1];  // Creamos el vector Criba con los números [2, N]
+        int[] primos = new int[N - 1];
+        int contadorPrimos = 0;  // Este contador rastrea cuántos números primos hemos encontrado
+
+        for (int i = 0; i < criba.length; i++) criba[i] = i + 2;
+
+        // Proceso de la Criba de Eratóstenes
+        for (int i = 0; i < criba.length; i++) {
+            if (criba[i] != 0) {
+                primos[contadorPrimos] = criba[i]; // se toma el primer elemento no eliminado como primo
+                contadorPrimos++;
+                eliminarMultiplos(criba, criba[i]); // Eliminamos este número y todos sus múltiplos de Criba
+            }
+        }
+        
+        return primos;
     }
 }

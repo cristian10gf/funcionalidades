@@ -473,7 +473,21 @@ public class funcionalidad {
     }
 
     public static int[] eliminarRepetidos(int[] vector) {
-        return Arrays.stream(vector).distinct().toArray();
+        int[] sinRepetidos = new int[vector.length];
+        int contador = 0;
+        for (int i = 0; i < vector.length; i++) {
+            boolean repetido = false;
+            for (int j = 0; j < contador; j++) {
+                if (vector[i] == sinRepetidos[j]) {
+                    repetido = true;
+                    break;
+                }
+            }
+            if (!repetido) {
+                sinRepetidos[contador] = vector[i];
+                contador++;
+            }
+        }
     }
 
     public static int[] eliminarRepetidos(ArrayList<Integer> vector) {
@@ -602,5 +616,109 @@ public class funcionalidad {
         }
         
         return primos;
+    }
+
+    public static int cambiarBase(int numero, int base) {
+        return Integer.parseInt(Integer.toString(numero, base));
+    }
+
+    public static int[] cambiarBase(int[] vector, int base) {
+        int[] vectorBase = new int[vector.length];
+        for (int i = 0; i < vector.length; i++) {
+            vectorBase[i] = cambiarBase(vector[i], base);
+        }
+        return vectorBase;
+    }
+
+    public static int[] rango(int inicio, int fin) {
+        int[] rango = new int[fin - inicio + 1];
+        for (int i = 0; i < rango.length; i++) {
+            rango[i] = inicio + i;
+        }
+        return rango;
+    }
+
+    public static int[] rango(int inicio, int fin, int paso) {
+        int[] rango = new int[(fin - inicio) / paso + 1];
+        for (int i = 0; i < rango.length; i++) {
+            rango[i] = inicio + i * paso;
+        }
+        return rango;
+    }
+
+    public static int[] rango(int fin) {
+        return rango(0, fin);
+    }
+
+    public static int[] factoresPrimos(int numero) {
+        int[] factores = new int[0];
+        int divisor = 2;
+        while (numero != 1) {
+            if (numero % divisor == 0) {
+                factores = Arrays.copyOf(factores, factores.length + 1);
+                factores[factores.length - 1] = divisor;
+                numero /= divisor;
+            } else {
+                divisor++;
+            }
+        }
+    }
+
+    public static boolean estaOrdenado(int[] vector, boolean ascendente) {
+        for (int i = 0; i < vector.length - 1; i++) {
+            if (ascendente && vector[i] > vector[i + 1]) return false;
+            if (!ascendente && vector[i] < vector[i + 1]) return false;
+        }
+        return true;
+    }
+
+    public static int determinanteMatriz(int[][] matriz) {
+        if (matriz.length == 2) {
+            return matriz[0][0] * matriz[1][1] - matriz[0][1] * matriz[1][0];
+        } else {
+            int determinante = 0;
+            for (int i = 0; i < matriz.length; i++) {
+                int[][] submatriz = new int[matriz.length - 1][matriz.length - 1];
+                for (int j = 1; j < matriz.length; j++) {
+                    for (int k = 0; k < matriz.length; k++) {
+                        if (k < i) {
+                            submatriz[j - 1][k] = matriz[j][k];
+                        } else if (k > i) {
+                            submatriz[j - 1][k - 1] = matriz[j][k];
+                        }
+                    }
+                }
+                determinante += matriz[0][i] * Math.pow(-1, i) * determinanteMatriz(submatriz);
+            }
+            return determinante;
+        }
+    }
+
+    public static int[] obtenerColumna(int[][] matriz, int columna) {
+        int[] columnaMatriz = new int[matriz.length];
+        for (int i = 0; i < matriz.length; i++) {
+            columnaMatriz[i] = matriz[i][columna];
+        }
+        return columnaMatriz;
+    }
+
+    public static int[] obtenerFila(int[][] matriz, int fila) {
+        return matriz[fila];
+    }
+
+    public static int[] obtenerDiagonalPrincipal(int[][] matriz) {
+        int[] diagonalPrincipal = new int[matriz.length];
+        for (int i = 0; i < matriz.length; i++) {
+            diagonalPrincipal[i] = matriz[i][i];
+        }
+        return diagonalPrincipal;
+    }
+
+    public static int[] obtenerDiagonalSecundaria(int[][] matriz) {
+        int[] diagonalSecundaria = new int[matriz.length];
+        for (int i = 0; i < matriz.length; i++) {
+            diagonalSecundaria[i] = matriz[i][matriz.length - 1 - i];
+        }
+        return diagonalSecundaria;
     }
 }

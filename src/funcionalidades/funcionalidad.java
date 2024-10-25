@@ -488,6 +488,7 @@ public class funcionalidad {
                 contador++;
             }
         }
+        return sinRepetidos;
     }
 
     public static int[] eliminarRepetidos(ArrayList<Integer> vector) {
@@ -662,6 +663,7 @@ public class funcionalidad {
                 divisor++;
             }
         }
+        return factores;
     }
 
     public static boolean estaOrdenado(int[] vector, boolean ascendente) {
@@ -720,5 +722,113 @@ public class funcionalidad {
             diagonalSecundaria[i] = matriz[i][matriz.length - 1 - i];
         }
         return diagonalSecundaria;
+    }
+    
+    public static String[] getLetras(String frase){
+        String[] letras = new String[frase.length()];
+        for (int i = 0; i < frase.length(); i++) {
+            letras[i] = frase.substring(i, i + 1);
+        }
+        return letras;
+    }
+
+    public static String[] getLetrasUnicas(String frase){
+        String[] letras = new String[0];
+        for (int i = 0; i < frase.length(); i++) {
+            if (!estaIncluido(letras, frase.substring(i, i + 1))) {
+                letras = Arrays.copyOf(letras, letras.length + 1);
+                letras[letras.length - 1] = frase.substring(i, i + 1);
+            }
+        }
+        return letras;
+    }
+
+    public static String[] getPalabras(String frase){
+        return frase.split(" ");
+    }
+
+    public static boolean estaIncluido(String[] letras, String letra){
+        for (String letra1 : letras) {
+            if (letra1.equals(letra)) return true;
+        }
+        return false;
+    }
+    
+    public static int getIndiceLetra(String[] letras, String letra) {
+        for (int i = 0; i < letras.length; i++) {
+            if (letras[i].equals(letra)) return i;
+        }
+        return -1;
+    }
+    
+    public static void OrdenarMatriz(int[][] array, int columna) { // Usamos Bubble Sort para ordenar la columna indicada
+        for (int i = 0; i < array.length - 1; i++) {
+            for (int j = 0; j < array.length - i - 1; j++) {
+                if (array[j][columna] > array[j + 1][columna]) {
+                    int[] temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    public static double[] getVectorAleatorio(int n) {
+        double[] vector = new double[n];
+        for (int i = 0; i < n; i++) {
+            vector[i] = Math.random() * 100;
+        }
+        return vector;
+    }
+
+    public static double[] getVectorAleatorio(int n, double min, double max) {
+        double[] vector = new double[n];
+        for (int i = 0; i < n; i++) {
+            vector[i] = Math.random() * (max - min) + min;
+        }
+        return vector;
+    }
+
+    public static double raizCuadrada(double numero) {
+        return Math.sqrt(numero);
+    }
+
+    public static double raizCubica(double numero) {
+        return Math.cbrt(numero);
+    }
+
+    public static double potencia(double base, double exponente) {
+        return Math.pow(base, exponente);
+    }
+
+    public static float MatrizInversa(float[][] matriz) {
+        float determinante = 0;
+        for (int i = 0; i < matriz.length; i++) {
+            float productoDiagonal = 1;
+            float productoDiagonalInversa = 1;
+            for (int j = 0; j < matriz.length; j++) {
+                productoDiagonal *= matriz[j][j];
+                productoDiagonalInversa *= matriz[j][matriz.length - 1 - j];
+            }
+            determinante += productoDiagonal - productoDiagonalInversa;
+        }
+        return determinante;
+    }
+
+    public static double[] resolverSistemaEcuaciones(double[][] matriz, double[] resultados) {
+        double[] soluciones = new double[matriz.length + 1];
+        for (int i = 0; i < matriz.length; i++) {   
+            double determinante = MatrizInversa(matriz);
+            double[][] matrizAux = new double[matriz.length][matriz.length];
+            for (int j = 0; j < matriz.length; j++) {
+                for (int k = 0; k < matriz.length; k++) {
+                    matrizAux[j][k] = matriz[j][k];
+                }
+                matrizAux[j][i] = resultados[j];
+            }
+            double determinanteAux = MatrizInversa(matrizAux);
+            soluciones[i] = determinanteAux / determinante;
+        }
+        return soluciones;
     }
 }

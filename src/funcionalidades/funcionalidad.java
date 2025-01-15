@@ -96,10 +96,7 @@ public class funcionalidad {
     }
 
     public static int octa_deci(int octa){
-        int y = 0;
-        int pro = octa;
-        int decimal = 0;
-        int pos = 1;
+        int pos = 1, y = 0, pro = octa, decimal = 0;
         while (pro > 0) {
             decimal = pro % 10;
             y = y + decimal * pos;
@@ -813,22 +810,5 @@ public class funcionalidad {
             determinante += productoDiagonal - productoDiagonalInversa;
         }
         return determinante;
-    }
-
-    public static double[] resolverSistemaEcuaciones(double[][] matriz, double[] resultados) {
-        double[] soluciones = new double[matriz.length + 1];
-        for (int i = 0; i < matriz.length; i++) {   
-            double determinante = MatrizInversa(matriz);
-            double[][] matrizAux = new double[matriz.length][matriz.length];
-            for (int j = 0; j < matriz.length; j++) {
-                for (int k = 0; k < matriz.length; k++) {
-                    matrizAux[j][k] = matriz[j][k];
-                }
-                matrizAux[j][i] = resultados[j];
-            }
-            double determinanteAux = MatrizInversa(matrizAux);
-            soluciones[i] = determinanteAux / determinante;
-        }
-        return soluciones;
     }
 }

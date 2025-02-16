@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,6 +20,25 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class funcionalidad {
+    public static int leerInt(String mensaje) {
+        Scanner scanner = new Scanner(System.in);
+        int numero;
+
+        while (true) {
+            System.out.print(mensaje);
+            String entrada = scanner.nextLine().trim(); // Elimina espacios extras
+
+            try {
+                numero = Integer.parseInt(entrada); // Intenta convertir la entrada a un número entero
+                return numero;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, ingrese un número entero.");
+            } finally {
+                scanner.close();
+            }
+        }
+    }
+
     public static boolean palindromo(String cadena){
         String di = new String();
         String dr = new String();
@@ -29,6 +50,121 @@ public class funcionalidad {
             }
         }
         return di.compareTo(dr) == 0;
+    }
+
+    public static boolean capicua(int numero){
+        int num = numero;
+        int inverso = 0;
+        while (num > 0) {
+            inverso = inverso * 10 + num % 10;
+            num = num / 10;
+        }
+        return numero == inverso;
+    }
+
+    public static double hipotenusa(float a, float b) {
+        return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+    }
+
+    public static double areaCirculo(float radio) {
+        return Math.PI * Math.pow(radio, 2);
+    }
+
+    public static double areaTriangulo(float base, float altura) {
+        return (base * altura) / 2;
+    }
+
+    public static double areaRectangulo(float base, float altura) {
+        return base * altura;
+    }
+
+    public static double areaCuadrado(float lado) {
+        return Math.pow(lado, 2);
+    }
+
+    public static float deCelsiusAFahrenheit(float celsius) {
+        return (celsius * 9 / 5) + 32;
+    }
+
+    public static float deFahrenheitACelsius(float fahrenheit) {
+        return (fahrenheit - 32) * 5 / 9;
+    }
+
+    public static void imprimirTablaMultiplicar(int numero) {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(numero + " x " + i + " = " + numero * i);
+        }
+    }
+
+    public static double porcentaje(float total, float parcial) {
+        return (parcial * 100) / total;
+    }
+
+    public static long combinatoria(int n, int k) {
+        return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    public static long permutacion(int n, int k) {
+        return factorial(n) / factorial(n - k);
+    }
+
+    public static float promedio(float[] numeros) {
+        float suma = 0;
+        for (float numero : numeros) {
+            suma += numero;
+        }
+        return suma / numeros.length;
+    }
+
+    public static float mediana(float[] numeros) {
+        Arrays.sort(numeros);
+        if (numeros.length % 2 == 0) {
+            return (numeros[numeros.length / 2 - 1] + numeros[numeros.length / 2]) / 2;
+        } else {
+            return numeros[numeros.length / 2];
+        }
+    }
+
+    public static float moda(float[] numeros) {
+        float moda = 0;
+        int maximo = 0;
+        for (int i = 0; i < numeros.length; i++) {
+            int contador = 0;
+            for (int j = 0; j < numeros.length; j++) {
+                if (numeros[j] == numeros[i]) {
+                    contador++;
+                }
+            }
+            if (contador > maximo) {
+                maximo = contador;
+                moda = numeros[i];
+            }
+        }
+        return moda;
+    }
+
+    public static float desviacionEstandar(float[] numeros) {
+        float promedio = promedio(numeros);
+        float suma = 0;
+        for (float numero : numeros) {
+            suma += Math.pow(numero - promedio, 2);
+        }
+        return (float) Math.sqrt(suma / numeros.length);
+    }
+
+    public static float varianza(float[] numeros) {
+        return (float) Math.pow(desviacionEstandar(numeros), 2);
+    }
+
+    public static double[] resolverEcuacionCuadratica(float a, float b, float c) {
+        double discriminante = Math.pow(b, 2) - 4 * a * c;
+        if (discriminante < 0) {
+            return new double[0];
+        } else if (discriminante == 0) {
+            return new double[] { -b / (2 * a) };
+        } else {
+            return new double[] { (-b + Math.sqrt(discriminante)) / (2 * a), (-b - Math.sqrt(discriminante)) / (2 * a) };
+        }
     }
     
     public static int mayorV(int[] vector){
@@ -538,10 +674,10 @@ public class funcionalidad {
         return vector.subList(inicio, fin).stream().mapToInt(i -> i).toArray();
     }
     
-    public static String sendMessageAPI(String modelo, String promtText) throws ProtocolException, IOException {
+    public static String sendMessageAPI(String modelo, String promtText) throws ProtocolException, IOException, URISyntaxException {
         if ("".equals(modelo)) modelo = "llama3.2";
         
-        URL url = new URL("http://localhost:11434/api/generate");
+        URL url = new URI("http", "localhost", "/api/generate", null).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(); 
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -629,11 +765,7 @@ public class funcionalidad {
     }
 
     public static int[] rango(int inicio, int fin) {
-        int[] rango = new int[fin - inicio + 1];
-        for (int i = 0; i < rango.length; i++) {
-            rango[i] = inicio + i;
-        }
-        return rango;
+        return rango(inicio, fin, 1);
     }
 
     public static int[] rango(int inicio, int fin, int paso) {
